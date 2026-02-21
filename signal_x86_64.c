@@ -342,6 +342,21 @@ NTSTATUS call_seh_handlers( EXCEPTION_RECORD *rec, CONTEXT *orig_context )
 }
 
 
+NTSTATUS WINAPI dispatch_wow_exception( EXCEPTION_RECORD *rec_ptr, CONTEXT *context_ptr )
+{
+    char buffer[sizeof(CONTEXT) + sizeof(CONTEXT_EX) + sizeof(XSTATE) + 128];
+    CONTEXT *context;
+    CONTEXT_EX *context_ex;
+    EXCEPTION_RECORD rec = *rec_ptr;
+
+    RtlInitializeExtendedContext( buffer, context_ptr->ContextFlags, &context_ex );
+    context = RtlLocateLegacyContext( context_ex, NULL );
+    RtlCopyContext( context, context_ptr->ContextFlags, context_ptr );
+    pWow64PrepareForException( &rec, context );
+    return dispatch_exception( &rec, context );
+}
+
+
 /*******************************************************************
  *		KiUserExceptionDispatcher (NTDLL.@)
  */
