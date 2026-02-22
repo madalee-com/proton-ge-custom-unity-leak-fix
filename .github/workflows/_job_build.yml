@@ -53,7 +53,7 @@ jobs:
       - name: Patch
         run: |
           git submodule update --init --filter=tree:0 --recursive
-          cp ./signal_x86_64.c ./wine/dlls/ntdll/signal_x86_64.c
+          cp ./signal_x86_64.c ./wine/dlls/ntdll/unix/signal_x86_64.c
           # apply proton-ge-custom patches
           ./patches/protonprep-valve-staging.sh || true
           # strip binaries at compile time to save space in the runner
